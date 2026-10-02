@@ -1,0 +1,51 @@
+services:
+  frontend:
+    container_name: khclicker-frontend
+    build:
+      context: ./frontend
+      target: runner
+    env_file:
+      - .env
+    working_dir: /app
+    restart: unless-stopped
+    volumes:
+      - khclicker_data:${ASSETS_STORAGE_DIR}
+    networks:
+      - khclicker-network
+
+  backend:
+    container_name: khclicker-backend
+    build:
+      context: ./backend
+      target: runner
+    env_file:
+      - .env
+    working_dir: /app
+    restart: unless-stopped
+    volumes:
+      - khclicker_data:${ASSETS_STORAGE_DIR}
+    networks:
+      - khclicker-network
+
+  database:
+    image: postgres
+    container_name: khclicker-database
+    restart: unless-stopped
+    env_file:
+      - .env
+    networks:
+      - khclicker-network
+
+  adminer:
+    image: adminer
+    container_name: khclicker-adminer
+    restart: unless-stopped
+    networks:
+      - khclicker-network
+
+volumes:
+  khclicker_data:
+
+networks:
+  khclicker-network:
+    driver: bridge
